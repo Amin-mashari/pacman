@@ -1,4 +1,7 @@
-PAC_MAN = "p"
+from typing import ForwardRef
+
+
+AGENT = "p"
 FOOD = "f"
 WALL = "1"
 SPACE = "0"
@@ -15,3 +18,14 @@ def readMaze(filename):
         row = [i for i in column]
         maze.append(row)
     return maze
+
+
+def getAgentPosition(maze):
+
+    for i in range(len(maze)):
+        for j in range(len(maze[i])):
+            if(maze[i][j] == AGENT):
+                agent = i, j
+            if(maze[i][j] == FOOD):
+                food = i, j
+    return agent, food
