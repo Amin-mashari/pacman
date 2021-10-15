@@ -21,13 +21,8 @@ NOT_SEEN_FOOD = True
 _agent_path_to_food = []
 
 
-
 def add_to_agent_memory(action):
-    # check if is in memory or not
-    # if exist add_seen_time
-    # else append
-
-    poss_index = get_poss(action[0], action[1] , agent_memory)
+    poss_index = get_poss(action[0], action[1], agent_memory)
 
     if(poss_index == -1):
         agent_memory.append([action[0], action[1], False, 1])
@@ -38,9 +33,11 @@ def add_to_agent_memory(action):
     return poss_index
 
 # action is poss
+
+
 def environment(action):
     if(action[0] == food_pos[0] and action[1] == food_pos[1]):
-        global NOT_SEEN_FOOD 
+        global NOT_SEEN_FOOD
         NOT_SEEN_FOOD = False
         return
 
@@ -54,7 +51,7 @@ def environment(action):
 
 
 def agent(percept):
-   return choosePosition(percept , agent_memory)
+    return choosePosition(percept, agent_memory)
 # return action
 
 
@@ -63,8 +60,10 @@ def main():
     while(NOT_SEEN_FOOD):
         percept = environment(agent(percept))
 
-
+    print("path:")
     print(_agent_path_to_food)
+    print("Steps:")
+    print(len(_agent_path_to_food))
 
 
 if(__name__ == "__main__"):
