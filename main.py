@@ -1,6 +1,6 @@
 from maze import *
 
-maze = []
-readMaze(maze, "map01.txt")
+
+maze = readMaze("map01.txt")
 
 print(maze)
