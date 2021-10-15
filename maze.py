@@ -1,6 +1,3 @@
-from typing import ForwardRef
-
-
 AGENT = "p"
 FOOD = "f"
 WALL = "1"
@@ -25,7 +22,13 @@ def getAgentPosition(maze):
     for i in range(len(maze)):
         for j in range(len(maze[i])):
             if(maze[i][j] == AGENT):
-                agent = i, j
+                agent = [i, j]
             if(maze[i][j] == FOOD):
-                food = i, j
+                food = [i, j]
+
+    maze[agent[0]][agent[1]] = SPACE
+    maze[food[0]][food[1]] = SPACE
     return agent, food
+
+
+maze = readMaze("map01.txt")

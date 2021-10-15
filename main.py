@@ -1,5 +1,5 @@
 from maze import *
-from Position import choosePosition
+from Position import *
 
 """
 alghoritm
@@ -14,24 +14,57 @@ look around{
     }
 }
 """
-maze = readMaze("map01.txt")
-agent_pos, food_pos = getAgentPosition(maze)
-agent_memory = [[agent_pos[0], agent_pos[1], False, 1], ]
+_agent_pos, food_pos = getAgentPosition(maze)
+agent_memory = [[_agent_pos[0], _agent_pos[1], False, 1]]
+_percept = agent_memory[0]
+NOT_SEEN_FOOD = True
+_agent_path_to_food = []
 
 
+
+def add_to_agent_memory(action):
+    # check if is in memory or not
+    # if exist add_seen_time
+    # else append
+
+    poss_index = get_poss(action[0], action[1] , agent_memory)
+
+    if(poss_index == -1):
+        agent_memory.append([action[0], action[1], False, 1])
+        poss_index = len(agent_memory)-1
+    else:
+        agent_memory[poss_index][3] += 1
+
+    return poss_index
+
+# action is poss
 def environment(action):
-    pass
+    if(action[0] == food_pos[0] and action[1] == food_pos[1]):
+        global NOT_SEEN_FOOD 
+        NOT_SEEN_FOOD = False
+        return
+
+    action_index = add_to_agent_memory(action)
+    _agent_path_to_food.append([action[0], action[1]])
+
+    return agent_memory[action_index]
+
 # return percept
 # percept = ["x_pos" , "y_pos" , "is_food"]
 
 
 def agent(percept):
-    pass
+   return choosePosition(percept , agent_memory)
 # return action
 
 
 def main():
-    print(choosePosition(agent_memory[0]))
+    percept = _percept
+    while(NOT_SEEN_FOOD):
+        percept = environment(agent(percept))
+
+
+    print(_agent_path_to_food)
 
 
 if(__name__ == "__main__"):
