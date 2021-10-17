@@ -1,5 +1,8 @@
 #from maze import *
 from Position import *
+from maze import generate_maze
+
+
 
 """
 alghoritm
@@ -67,11 +70,10 @@ def main():
     while(NOT_SEEN_FOOD):
         # print(_agent_path_to_food)
         percept = environment(agent(percept))
-
-    # print("path:")
+    print("path:")
     print(_agent_path_to_food)
-    print("Steps:")
-    print(len(_agent_path_to_food))
+    print("len:" ,len(_agent_path_to_food))
+    #save_maze(25 , 30, "map5.txt")
 
 
 if(__name__ == "__main__"):
