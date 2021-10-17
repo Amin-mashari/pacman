@@ -1,4 +1,4 @@
-from maze import *
+#from maze import *
 from Position import *
 
 """
@@ -36,9 +36,16 @@ def add_to_agent_memory(action):
 
 
 def environment(action):
-    if(action[0] == food_pos[0] and action[1] == food_pos[1]):
-        global NOT_SEEN_FOOD
-        NOT_SEEN_FOOD = False
+    try:
+        if(action[0] == food_pos[0] and action[1] == food_pos[1]):
+            global NOT_SEEN_FOOD
+            NOT_SEEN_FOOD = False
+            return
+    except IndexError:
+        print("ERROR")
+        print(_agent_path_to_food)
+        #print(action[0], action[1]) 
+        #action is out of bound
         return
 
     action_index = add_to_agent_memory(action)
@@ -58,9 +65,10 @@ def agent(percept):
 def main():
     percept = _percept
     while(NOT_SEEN_FOOD):
+        # print(_agent_path_to_food)
         percept = environment(agent(percept))
 
-    print("path:")
+    # print("path:")
     print(_agent_path_to_food)
     print("Steps:")
     print(len(_agent_path_to_food))

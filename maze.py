@@ -3,8 +3,6 @@ FOOD = "f"
 WALL = "1"
 SPACE = "0"
 
-# read MAZE and print
-
 
 def readMaze(filename):
     maze = []
