@@ -14,7 +14,7 @@ look around{
     }
 }
 """
-_agent_pos, food_pos = getAgentPosition(maze)
+_agent_pos, _food_pos = getAgentAndFoodPossRandomly(maze)
 agent_memory = [[_agent_pos[0], _agent_pos[1], False, 1]]
 _percept = agent_memory[0]
 NOT_SEEN_FOOD = True
@@ -37,7 +37,7 @@ def add_to_agent_memory(action):
 
 def environment(action):
 
-    if(action[0] == food_pos[0] and action[1] == food_pos[1]):
+    if(action[0] == _food_pos[0] and action[1] == _food_pos[1]):
         global NOT_SEEN_FOOD
         NOT_SEEN_FOOD = False
         return
@@ -58,13 +58,15 @@ def agent(percept):
 
 def main():
     percept = _percept
+    
     while(NOT_SEEN_FOOD):
-        # print(_agent_path_to_food)
         percept = environment(agent(percept))
+        
     print("path:")
     print(_agent_path_to_food)
     print("len:", len(_agent_path_to_food))
     #save_maze(25 , 30, "map5.txt")
+    
 
 
 if(__name__ == "__main__"):
