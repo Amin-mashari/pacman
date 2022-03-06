@@ -1,5 +1,6 @@
-from Position import *
-
+from maze import MAZE
+from Position import get_position_row_in_memory, choose_poss_to_go
+import time
 
 """
 alghoritm
@@ -14,60 +15,131 @@ look around{
     }
 }
 """
-_agent_pos, _food_pos = getAgentAndFoodPossRandomly(maze)
-agent_memory = [[_agent_pos[0], _agent_pos[1], False, 1]]
-_percept = agent_memory[0]
+#global vars
+_agent_pos
+_food_pos
+agent_memory
+_percept
 NOT_SEEN_FOOD = True
-_agent_path_to_food = []
 
 
-def add_to_agent_memory(action):
-    poss_index = get_poss(action[0], action[1], agent_memory)
 
-    if(poss_index == -1):
-        agent_memory.append([action[0], action[1], False, 1])
-        poss_index = len(agent_memory)-1
+def init_vars():
+    global _agent_pos, _food_pos, _percept, agent_memory
+    # get agent poss by read File
+    _agent_pos, _food_pos = MAZE.get_agent_and_food_poss_from_file()
+    # save agent curretn state and food status and seent time
+    #                x          y        foodstatus    seentimes
+    agent_memory = [[_agent_pos[0], _agent_pos[1], False, 1]]
+    _percept = agent_memory[0]
+
+
+def get_possiton_index_in_memory(x, y):
+    poss_row = get_position_row_in_memory(x, y, agent_memory)
+
+    # row dosnt exist
+    if(poss_row == -1):
+        agent_memory.append([x, y, False, 1])
+        poss_row = len(agent_memory)-1
     else:
-        agent_memory[poss_index][3] += 1
+        # add seen position times
+        agent_memory[poss_row][3] += 1
 
-    return poss_index
+    return poss_row
 
-# action is poss
+
+def set_agent_poss(a, b):
+    _agent_pos[0] = a
+    _agent_pos[1] = b
+
+
+def agent_go_to_new_poss(action):
+    x = _agent_pos[0]
+    y = _agent_pos[1]
+
+    match action:
+        case "LEFT":
+            y = y - 1
+        case "RIGHT":
+            y = y + 1
+        case "UP":
+            x = x - 1
+        case "DOWN":
+            x = x + 1
+
+    Maze.update_maze(_agent_pos, x, y)
+    set_agent_poss(x, y)
+
+
+def is_same_poss(aPoss, fPoss):
+    return aPoss[0] == fPoss[0] and aPoss[1] == fPoss[1]
+
+
+def is_agent_find_food():
+    return is_same_poss(_agent_pos, _food_pos)
 
 
 def environment(action):
+    agent_go_to_new_poss(action)
 
-    if(action[0] == _food_pos[0] and action[1] == _food_pos[1]):
+    if(is_agent_find_food()):
         global NOT_SEEN_FOOD
         NOT_SEEN_FOOD = False
         return
 
-    action_index = add_to_agent_memory(action)
-    _agent_path_to_food.append([action[0], action[1]])
+    x_cuurent = _agent_pos[0]
+    y_cuurent = _agent_pos[1]
 
-    return agent_memory[action_index]
+    poss_index_in_memory = get_possiton_index_in_memory(x_cuurent, y_cuurent)
+
+    return agent_memory[poss_index_in_memory]
 
 # return percept
 # percept = ["x_pos" , "y_pos" , "is_food"]
 
 
+def action(current_poss, choosen_poss):
+    if(current_poss[0] < choosen_poss[0]):
+        return "DOWN"
+
+    elif(current_poss[0] > choosen_poss[0]):
+        return "UP"
+    else:
+        if(current_poss[1] < choosen_poss[1]):
+            return "RIGHT"
+        else:
+            return "LEFT"
+
+
 def agent(percept):
-    return choosePosition(percept, agent_memory)
+
+    current_poss = [percept[0], percept[1]]
+    choosen_poss = choose_poss_to_go(percept, agent_memory)
+    return action(current_poss, choosen_poss)
 # return action
 
 
 def main():
-    percept = _percept
-    
-    while(NOT_SEEN_FOOD):
-        percept = environment(agent(percept))
-        
-    print("path:")
-    print(_agent_path_to_food)
-    print("len:", len(_agent_path_to_food))
-    #save_maze(25 , 30, "map5.txt")
-    
 
+    percept = _percept
+    agent_moves = 1
+    first_agent_pos = _agent_pos
+
+    while(NOT_SEEN_FOOD):
+        Maze.printMaze()
+        print()
+        agent_moves += 1
+        percept = environment(agent(percept))
+        time.sleep(0.5)
+
+    Maze.printMaze()
+    print()
+    print("food has found! ")
+    print(f'agent Moves: {agent_moves}')
+    print(
+        f'agent position was x:{first_agent_pos[0]} y:{first_agent_pos[1]+1}')
+    print(f'food position is x:{_food_pos[0]} y:{_food_pos[1]+1}')
 
 if(__name__ == "__main__"):
+    Maze = MAZE()
     main()

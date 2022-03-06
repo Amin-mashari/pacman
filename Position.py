@@ -1,31 +1,40 @@
-from maze import *
+from maze import is_food, is_space
 from random import randrange
 
 
-def get_poss(x, y, agent_memory):
+def is_same(a, b): return a == b
+
+
+def is_same_position(x1, y1, possAray):
+    x = possAray[0]
+    y = possAray[1]
+    return is_same(x1, x) and is_same(y1, y)
+
+
+def get_position_row_in_memory(x, y, agent_memory):
 
     for i in range(len(agent_memory)):
-        if(x == agent_memory[i][0] and y == agent_memory[i][1]):
+        if(is_same_position(x, y, agent_memory[i])):
             return i
     return -1
 
 
-def getPath(x, y):
-    poss = []
+def get_avail_pathes(current_x, current_y):
+    avil_positions = []
     # right
-    if(maze[x+1][y] == SPACE):
-        poss.append([x+1, y])
+    if(is_food(current_x + 1, current_y) or is_space(current_x + 1, current_y)):
+        avil_positions.append([current_x+1, current_y])
     # left
-    if(maze[x-1][y] == SPACE):
-        poss.append([x-1, y])
+    if(is_food(current_x - 1, current_y) or is_space(current_x - 1, current_y)):
+        avil_positions.append([current_x-1, current_y])
     # up
-    if(maze[x][y+1] == SPACE):
-        poss.append([x, y+1])
+    if(is_food(current_x, current_y + 1) or is_space(current_x, current_y + 1)):
+        avil_positions.append([current_x, current_y+1])
     # down
-    if(maze[x][y-1] == SPACE):
-        poss.append([x, y-1])
+    if(is_food(current_x, current_y - 1) or is_space(current_x, current_y - 1)):
+        avil_positions.append([current_x, current_y-1])
 
-    return poss
+    return avil_positions
 
 
 def is_poss_seen(poss, agent_memory):
@@ -42,7 +51,7 @@ def get_seen_poss_time(poss, agent_memory):
     return 0
 
 
-def min_seen_poss(pathes, agent_memory):
+def get_min_seen_poss(pathes, agent_memory):
     min = 10000
     choisen_poss = []
     for poss in pathes:
@@ -54,18 +63,40 @@ def min_seen_poss(pathes, agent_memory):
     return choisen_poss
 
 
-def choosePosition(percept, agent_memory):
+def look_around_for_food_location(avail_pathes):
+    for x in avail_pathes:
+        if(is_food(x[0], x[1])):
+            return x[0], x[1]
+    return -1, -1
+
+
+def is_food_finded(food_poss):
+    if(food_poss[0] == -1):
+        return False
+    return True
+
+# return x , y
+
+
+def choose_poss_to_go(percept, agent_memory):
     x_pos = percept[0]
     y_pos = percept[1]
-    pathes = getPath(x_pos, y_pos)
+    avail_pathes = get_avail_pathes(x_pos, y_pos)
+
+    # check food is around
+    food_poss = look_around_for_food_location(avail_pathes)
+    if(is_food_finded(food_poss)):
+        return food_poss
+
+    # else
     not_seen_poss = []
 
-    for poss in pathes:
+    for poss in avail_pathes:
         if not(is_poss_seen(poss, agent_memory)):
             not_seen_poss.append(poss)
 
     if not(not_seen_poss):
-        return min_seen_poss(pathes, agent_memory)
+        return get_min_seen_poss(avail_pathes, agent_memory)
     else:
         rand = randrange(len(not_seen_poss))
         return not_seen_poss[rand]
