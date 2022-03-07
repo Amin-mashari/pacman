@@ -1,4 +1,3 @@
-from maze import is_food, is_space
 from random import randrange
 
 
@@ -19,19 +18,20 @@ def get_position_row_in_memory(x, y, agent_memory):
     return -1
 
 
-def get_avail_pathes(current_x, current_y):
+def get_avail_pathes(current_x, current_y , maze):
     avil_positions = []
+    
     # right
-    if(is_food(current_x + 1, current_y) or is_space(current_x + 1, current_y)):
+    if(maze.is_food(current_x + 1, current_y) or maze.is_space(current_x + 1, current_y)):
         avil_positions.append([current_x+1, current_y])
     # left
-    if(is_food(current_x - 1, current_y) or is_space(current_x - 1, current_y)):
+    if(maze.is_food(current_x - 1, current_y) or maze.is_space(current_x - 1, current_y)):
         avil_positions.append([current_x-1, current_y])
     # up
-    if(is_food(current_x, current_y + 1) or is_space(current_x, current_y + 1)):
+    if(maze.is_food(current_x, current_y + 1) or maze.is_space(current_x, current_y + 1)):
         avil_positions.append([current_x, current_y+1])
     # down
-    if(is_food(current_x, current_y - 1) or is_space(current_x, current_y - 1)):
+    if(maze.is_food(current_x, current_y - 1) or maze.is_space(current_x, current_y - 1)):
         avil_positions.append([current_x, current_y-1])
 
     return avil_positions
@@ -63,9 +63,9 @@ def get_min_seen_poss(pathes, agent_memory):
     return choisen_poss
 
 
-def look_around_for_food_location(avail_pathes):
+def look_around_for_food_location(avail_pathes,maze):
     for x in avail_pathes:
-        if(is_food(x[0], x[1])):
+        if(maze.is_food(x[0], x[1])):
             return x[0], x[1]
     return -1, -1
 
@@ -78,13 +78,13 @@ def is_food_finded(food_poss):
 # return x , y
 
 
-def choose_poss_to_go(percept, agent_memory):
+def choose_poss_to_go(percept, agent_memory , maze):
     x_pos = percept[0]
     y_pos = percept[1]
-    avail_pathes = get_avail_pathes(x_pos, y_pos)
+    avail_pathes = get_avail_pathes(x_pos, y_pos,maze)
 
     # check food is around
-    food_poss = look_around_for_food_location(avail_pathes)
+    food_poss = look_around_for_food_location(avail_pathes,maze)
     if(is_food_finded(food_poss)):
         return food_poss
 

@@ -1,5 +1,5 @@
-from maze import MAZE
 from Position import get_position_row_in_memory, choose_poss_to_go
+from maze import MAZE
 import time
 
 """
@@ -16,22 +16,13 @@ look around{
 }
 """
 #global vars
-_agent_pos
-_food_pos
-agent_memory
-_percept
 NOT_SEEN_FOOD = True
-
 
 
 def init_vars():
     global _agent_pos, _food_pos, _percept, agent_memory
     # get agent poss by read File
-    _agent_pos, _food_pos = MAZE.get_agent_and_food_poss_from_file()
-    # save agent curretn state and food status and seent time
-    #                x          y        foodstatus    seentimes
-    agent_memory = [[_agent_pos[0], _agent_pos[1], False, 1]]
-    _percept = agent_memory[0]
+    
 
 
 def get_possiton_index_in_memory(x, y):
@@ -67,7 +58,7 @@ def agent_go_to_new_poss(action):
         case "DOWN":
             x = x + 1
 
-    Maze.update_maze(_agent_pos, x, y)
+    _maze.update_maze(_agent_pos, x, y)
     set_agent_poss(x, y)
 
 
@@ -114,7 +105,7 @@ def action(current_poss, choosen_poss):
 def agent(percept):
 
     current_poss = [percept[0], percept[1]]
-    choosen_poss = choose_poss_to_go(percept, agent_memory)
+    choosen_poss = choose_poss_to_go(percept, agent_memory,_maze)
     return action(current_poss, choosen_poss)
 # return action
 
@@ -126,13 +117,13 @@ def main():
     first_agent_pos = _agent_pos
 
     while(NOT_SEEN_FOOD):
-        Maze.printMaze()
+        _maze.printMaze()
         print()
         agent_moves += 1
         percept = environment(agent(percept))
         time.sleep(0.5)
 
-    Maze.printMaze()
+    _maze.printMaze()
     print()
     print("food has found! ")
     print(f'agent Moves: {agent_moves}')
@@ -140,6 +131,13 @@ def main():
         f'agent position was x:{first_agent_pos[0]} y:{first_agent_pos[1]+1}')
     print(f'food position is x:{_food_pos[0]} y:{_food_pos[1]+1}')
 
-if(__name__ == "__main__"):
-    Maze = MAZE()
-    main()
+#start
+
+_maze = MAZE("env3.txt")
+_agent_pos, _food_pos = _maze.get_agent_and_food_poss_from_file()
+    # save agent curretn state and food status and seent time
+    #                x          y        foodstatus    seentimes
+agent_memory = [[_agent_pos[0], _agent_pos[1], False, 1]]
+_percept = agent_memory[0]
+
+main()
