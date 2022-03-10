@@ -1,4 +1,5 @@
 from random import randrange, shuffle
+import math
 
 AGENT = "a"
 FOOD = "f"
@@ -101,10 +102,24 @@ class MAZE:
         self.edit_block(self.__agentPos[0], self.__agentPos[1], AGENT)
         self.edit_block(self.__foodPos[0], self.__foodPos[1], FOOD)
 
-    def generate_maze(self, w=0, h=0):
-        vis = [[0] * w + [1] for _ in range(h)] + [[1] * (w + 1)]
-        ver = [["*-"] * w + ['*'] for _ in range(h)] + [[]]
-        hor = [["**"] * w + ['*'] for _ in range(h + 1)]
+    def checkNumbersAreStandardFodMaze(self,_w, _h):
+        if(_w < 5):
+            _w = 5
+        if(_h < 5):
+            _h = 5
+        return _w, _h
+
+    def generate_maze(self, r=5, c=5):
+        r, c = self.checkNumbersAreStandardFodMaze(r, c)
+        col = math.ceil(r/2) - 1
+        row = math.ceil(c/2) - 1
+        vis = [[0] * row + [1] for _ in range(col)] + [[1] * (row + 1)]
+        ver = [["*-"] * row + ['*'] for _ in range(col)] + [[]]
+        hor = [["**"] * row + ['*'] for _ in range(col + 1)]
+
+        # vis = [[0] * col + [1] for _ in range(row)] + [[1] * (col + 1)]
+        # ver = [["*-"] * col + ['*'] for _ in range(row)] + [[]]
+        # hor = [["**"] * col + ['*'] for _ in range(row + 1)]
 
         def walk(x, y):
             vis[y][x] = 1
@@ -120,9 +135,9 @@ class MAZE:
                     ver[y][max(x, xx)] = "--"
                 walk(xx, yy)
 
-        walk(randrange(w), randrange(h))
+        walk(randrange(col), randrange(row))
 
-        s = f'{w},{h}\n'
+        s = f'{r},{c}\n'
         for (a, b) in zip(hor, ver):
             s += ''.join(a + ['\n'] + b + ['\n'])
         return s

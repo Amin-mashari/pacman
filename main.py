@@ -121,7 +121,7 @@ def main():
         print()
         agent_moves += 1
         percept = environment(agent(percept))
-        time.sleep(0)
+        time.sleep(0.5)
 
     _maze.printMaze()
     print()
@@ -132,9 +132,7 @@ def main():
     print(f'food position is x:{_food_pos[0]} y:{_food_pos[1]+1}')
 
 # start
-
-
-_maze = MAZE("env1.txt")
+_maze = MAZE("rand.txt")
 _agent_pos, _food_pos = _maze.get_agent_and_food_poss_from_file()
 # save agent curretn state and food status and seent time
 #                x          y        foodstatus    seentimes
